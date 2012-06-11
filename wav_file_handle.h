@@ -18,7 +18,6 @@ typedef enum {
 typedef enum {
     kIsRead = 1,
     kIsWrite = 2,
-    kIsReadWrite = 3,
 } OpenFlags;
 
 #pragma pack(push, 1)
@@ -65,7 +64,9 @@ typedef struct WavData {
 
 
 // prottype
-int OpenWav(char *filename, FILE *fp, OpenFlags flag);
+FILE *OpenWav(char *filename, OpenFlags flag);
 int CloseWav(FILE *fp);
+int ReadRiffChunk(FILE *fp, RiffChunk *riff_chunk);
+
 
 #endif   // WAV_FILE_HANDLE_

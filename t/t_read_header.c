@@ -8,21 +8,23 @@ int main(int argc, char *argv[]) {
     FILE *fp;
     char *filename = "gt1.wav";
     OpenFlags flag = kIsRead;
+    RiffChunk *riff_chunk;
     WavFileHeader *wav_file_header;
 
     // open test
-    if (OpenWav(fp, filename, flag) == 0) {
+    if ((fp = OpenWav(filename, flag)) != NULL) {
         printf("ok -- open\n");
     }
     else {
         printf("fail -- open\n");
     }
 
-    if (ReadHeader(fp, wav_file_header) == 0) {
-        printf("ok -- read\n");
+    // read riff chunk
+    if (ReadRiffChunk(fp, riff_chunk) == 0) {
+        printf("ok -- read_riff\n");
     }
     else {
-        printf("fail -- read\n");
+        printf("fail -- read_riff\n");
     }
 
     // close test

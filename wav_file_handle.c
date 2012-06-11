@@ -9,28 +9,21 @@
 #include "wav_file_handle.h"
 
 
-int OpenWav(FILE *fp, char *filename, OpenFlags flag) {
+FILE *OpenWav(char *filename, OpenFlags flag) {
+    FILE *temp;
     switch (flag) {
-    case 1:   //read
-        if ((fp = fopen(filename, "rb")) == NULL) {
-            fprintf(stderr, "[ERROR] Can't open %s.\n", filename);
-            return -1;
-        }
+    case kIsRead:
+        temp = fopen(filename, "rb");
         break;
-    case 2:   //write
-        if ((fp = fopen(filename, "wb")) == NULL) {
-            fprintf(stderr, "[ERROR] Can't open %s.\n", filename);
-            return -1;
-        }
-        break;
-    case 3:   //read & write
-        if ((fp = fopen(filename, "rwb")) == NULL) {
-            fprintf(stderr, "[ERROR] Can't open %s.\n", filename);
-            return -1;
-        }
+    case kIsWrite:
+        temp = fopen(filename, "wb");
         break;
     }
-    return 0;
+    if (temp == NULL) {
+        fprintf(stderr, "[ERROR] Can't open %s.\n", filename);
+        return NULL;
+    }
+    return temp;
 }
 
 int CloseWav(FILE *fp) {
@@ -39,5 +32,20 @@ int CloseWav(FILE *fp) {
         return -1;
     }
     fclose(fp);
+    return 0;
+}
+
+int ReadRiffChunk(FILE *fp, RiffChunk *riff_chunk) {
+    RiffChunk temp;
+    fread(&temp, sizeof(temp), 1, fp);
+    riff_chunk = &temp;
+    if (memcmp(riff_chunk->file_type, "RIFF", 4)) {
+        fprintf(stderr, "[ERROR] This is NOT 'RIFF' file.\n");
+        return -1;
+    }
+    if (memcmp(riff_chunk->riff_type, "WAVE", 4)) {
+        fprintf(stderr, "[ERROR] This is NOT 'WAVE' file.\n");
+        return -1;
+    }
     return 0;
 }
