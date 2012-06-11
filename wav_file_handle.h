@@ -52,5 +52,8 @@ typedef struct WavFileHeader {
 #pragma pack(pop)
 
 
+// prottype
+int OpenWav(char *filename, FILE *fp, OpenFlags flag);
+int CloseWav(FILE *fp);
 
 #endif   // WAV_FILE_HANDLE_

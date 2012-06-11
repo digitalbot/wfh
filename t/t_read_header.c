@@ -6,12 +6,23 @@
 
 int main(int argc, char *argv[]) {
     FILE *fp;
-    char *filename("gt1.wav");
-    OpenFlags flag(kIsRead);
+    char *filename = "gt1.wav";
+    OpenFlags flag = kIsRead;
 
-    if (OpenWav(filename, fp, flag)) {
-        return -1;
+    // open test
+    if (OpenWav(filename, fp, flag) == 0) {
+        printf("ok -- open\n");
     }
-    printf("ok\n");
-    CloseWav(fp);
+    else {
+        printf("fail -- open\n");
+    }
+
+    // close test
+    if (CloseWav(fp) == 0) {
+        printf("ok -- close\n");
+    }
+    else {
+        printf("fail -- close\n");
+    }
 }
+
