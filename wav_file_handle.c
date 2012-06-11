@@ -9,7 +9,7 @@
 #include "wav_file_handle.h"
 
 
-int OpenWav(char *filename, FILE *fp, OpenFlags flag) {
+int OpenWav(FILE *fp, char *filename, OpenFlags flag) {
     switch (flag) {
     case 1:   //read
         if ((fp = fopen(filename, "rb")) == NULL) {

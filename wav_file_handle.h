@@ -51,6 +51,18 @@ typedef struct WavFileHeader {
 } WavFileHeader;
 #pragma pack(pop)
 
+typedef struct WavData {
+    unsigned short num_of_channels;
+    unsigned int   num_of_samples;
+    unsigned int   samples_per_sec;
+    unsigned int   bytes_per_sec;
+    unsigned short size_of_block;
+    unsigned int   bytes_per_sample;
+    double         buf_abs_limit;
+    double         *data;
+    double         *data_r;
+} WavData;
+
 
 // prottype
 int OpenWav(char *filename, FILE *fp, OpenFlags flag);
