@@ -9,7 +9,7 @@
 #include "wav_file_handle.h"
 
 
-FILE *OpenWav(char *filename, OpenFlags flag) {
+FILE *open_wav(char *filename, OpenFlags flag) {
     FILE *temp;
     switch (flag) {
     case kIsRead:
@@ -26,7 +26,7 @@ FILE *OpenWav(char *filename, OpenFlags flag) {
     return temp;
 }
 
-int CloseWav(FILE *fp) {
+int close_wav(FILE *fp) {
     if (fp == NULL) {
         fprintf(stderr, "[ERROR] something is wrong!\n");
         return -1;
@@ -35,7 +35,7 @@ int CloseWav(FILE *fp) {
     return 0;
 }
 
-int ReadRiffChunk(FILE *fp, RiffChunk *riff_chunk) {
+int read_riff_chunk(FILE *fp, RiffChunk *riff_chunk) {
     RiffChunk temp;
     fread(&temp, sizeof(temp), 1, fp);
     riff_chunk = &temp;

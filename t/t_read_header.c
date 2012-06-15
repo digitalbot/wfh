@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     WavFileHeader *wav_file_header;
 
     // open test
-    if ((fp = OpenWav(filename, flag)) != NULL) {
+    if ((fp = open_wav(filename, flag)) != NULL) {
         printf("ok -- open\n");
     }
     else {
@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
     }
 
     // read riff chunk
-    if (ReadRiffChunk(fp, riff_chunk) == 0) {
+    if (read_riff_chunk(fp, riff_chunk) == 0) {
         printf("ok -- read_riff\n");
     }
     else {
@@ -28,11 +28,10 @@ int main(int argc, char *argv[]) {
     }
 
     // close test
-    if (CloseWav(fp) == 0) {
+    if (close_wav(fp) == 0) {
         printf("ok -- close\n");
     }
     else {
         printf("fail -- close\n");
     }
 }
-
