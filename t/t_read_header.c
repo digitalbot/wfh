@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "../wav_file_handle.h"
 
@@ -9,29 +11,18 @@ int main(int argc, char *argv[]) {
     char *filename = "gt1.wav";
     OpenFlags flag = kIsRead;
     RiffChunk *riff_chunk;
-    WavFileHeader *wav_file_header;
+    //FmtChunk *fmt_chunk;
+    //WavFileHeader *wav_file_header;
 
-    // open test
-    if ((fp = open_wav(filename, flag)) != NULL) {
-        printf("ok -- open\n");
-    }
-    else {
-        printf("fail -- open\n");
-    }
+    assert((fp = open_wav(filename, flag)) != NULL);
 
     // read riff chunk
-    if (read_riff_chunk(fp, riff_chunk) == 0) {
-        printf("ok -- read_riff\n");
-    }
-    else {
-        printf("fail -- read_riff\n");
-    }
+    assert(! read_riff_chunk(fp, riff_chunk));
 
-    // close test
-    if (close_wav(fp) == 0) {
-        printf("ok -- close\n");
-    }
-    else {
-        printf("fail -- close\n");
-    }
+    // read fmt chunk
+    //assert(! read_fmt_chunk(fp, fmt_chunk));
+
+    assert(! close_wav(fp));
+
+    return EXIT_SUCCESS;
 }
