@@ -116,14 +116,12 @@ int read_data_chunk(FILE *fp, DataChunk *chunk) {
     }
 
     DataChunk temp;
-    fread(&temp.chunk_type, sizeof(temp.chunk_type), 1, fp);
-
     unsigned char seeked_flg = 0;
     while (1) {
+        fread(&temp.chunk_type, sizeof(temp.chunk_type), 1, fp);
         if (memcmp(temp.chunk_type, "data", 4)) {
             if (memcmp(temp.chunk_type, "fact", 4) == 0) {
                 fseek(fp, 12, SEEK_CUR);
-                fread(&temp.chunk_type, sizeof(temp.chunk_type), 1, fp);
             }
             else if (! seeked_flg) {
                 fseek(fp, - sizeof(temp.chunk_type), SEEK_CUR);
@@ -132,8 +130,6 @@ int read_data_chunk(FILE *fp, DataChunk *chunk) {
                 unsigned short size_of_ext = 0;
                 fread(&size_of_ext, sizeof(size_of_ext), 1, fp);
                 fseek(fp, size_of_ext, SEEK_CUR);
-
-                fread(&temp.chunk_type, sizeof(temp.chunk_type), 1, fp);
             }
             else {
                 fprintf(stderr, "[ERROR] This file has not 'data' chunk.\n");
