@@ -66,7 +66,9 @@ typedef struct WavData {
 // prottype
 FILE *open_wav(char *filename, OpenFlags flag);
 int close_wav(FILE *fp);
-int read_riff_chunk(FILE *fp, RiffChunk *riff_chunk);
+int read_riff_chunk(FILE *fp, RiffChunk *chunk);
+int read_fmt_chunk(FILE *fp, FmtChunk *chunk);
+int read_data_chunk(FILE *fp, DataChunk *chunk);
 
 
 #endif   // WAV_FILE_HANDLE_

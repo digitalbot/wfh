@@ -1,9 +1,9 @@
-CC					= clang
-CFLAGS				= -O4 -I/usr/local/include
-DEST				= /usr/local/bin
-LDFLAGS				= -L/usr/local/lib
+CC				= clang
+CFLAGS			= -O4 -I/usr/local/include
+DEST			= /usr/local/bin
+LDFLAGS			= -L/usr/local/lib
 
-TARGETS				= t_read_header t_open_wav
+TARGETS			= t_read_header t_open_wav
 
 all:				$(TARGETS)
 .SUFFIXES:	 		.c .o
