@@ -144,10 +144,31 @@ int read_data_chunk(FILE *fp, DataChunk *chunk) {
 
     fread(&temp.size_of_data, sizeof(temp.size_of_data), 1,fp);
     if (temp.size_of_data <= 0) {
-        fprintf(stderr, "[ERROR] size of data is wrong .\n");
+        fprintf(stderr, "[ERROR] size of data is wrong.\n");
         return EXIT_FAILURE;
     }
 
     *chunk = temp;
+    return EXIT_SUCCESS;
+}
+
+int read_wav_file_header(FILE *fp, WavFileHeader *header) {
+    RiffChunk riff_chunk;
+    FmtChunk  fmt_chunk;
+    DataChunk data_chunk;
+
+    if (read_riff_chunk(fp, &riff_chunk)) {
+        return EXIT_FAILURE;
+    }
+    if (read_fmt_chunk(fp, &fmt_chunk)) {
+        return EXIT_FAILURE;
+    }
+    if (read_data_chunk(fp, &data_chunk)) {
+        return EXIT_FAILURE;
+    }
+
+    header->riff_chunk = riff_chunk;
+    header->fmt_chunk = fmt_chunk;
+    header->data_chunk = data_chunk;
     return EXIT_SUCCESS;
 }

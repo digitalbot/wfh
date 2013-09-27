@@ -69,6 +69,7 @@ int close_wav(FILE *fp);
 int read_riff_chunk(FILE *fp, RiffChunk *chunk);
 int read_fmt_chunk(FILE *fp, FmtChunk *chunk);
 int read_data_chunk(FILE *fp, DataChunk *chunk);
+int read_wav_file_header(FILE *fp, WavFileHeader *header);
 
 
 #endif   // WAV_FILE_HANDLE_
