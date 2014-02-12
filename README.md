@@ -29,3 +29,9 @@ You have to destroy WavData objects!
 
 
 That is all.
+
+
+Credits and license
+-----
+
+wfh was created by kosuke nakamura and is released under the MIT license.
