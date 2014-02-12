@@ -18,12 +18,14 @@ usage
 -----
 
 ### initialize with file pointer
-        WavData *wav = new_wav_data(fp);
+
+    WavData *wav = new_wav_data(fp);
 
 ### destroy
 
 You have to destroy WavData objects!
-        destroy_wav_data(wav);
+
+    destroy_wav_data(wav);
 
 
 That is all.
