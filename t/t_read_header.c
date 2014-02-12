@@ -3,7 +3,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "../wav_file_handle.h"
+#include "../wfh.h"
 
 void t_read_riff_chunk(FILE *fp);
 void t_read_fmt_chunk(FILE *fp);
@@ -65,18 +65,18 @@ void t_read_data_chunk(FILE *fp) {
 void t_read_wav_file_header(FILE *fp) {
     WavFileHeader header;
     assert(read_wav_file_header(fp, &header) == EXIT_SUCCESS);
-    assert(memcmp(header.riff_chunk.file_type, "RIFF", 4) == 0);
-    assert(header.riff_chunk.size_of_riff == 1574176);
-    assert(memcmp(header.riff_chunk.riff_type, "WAVE", 4) == 0);
-    assert(memcmp(header.fmt_chunk.chunk_type, "fmt ", 4) == 0);
-    assert(header.fmt_chunk.size_of_fmt == 16);
-    assert(header.fmt_chunk.format_tag == 1);
-    assert(header.fmt_chunk.num_of_channels == 1);
-    assert(header.fmt_chunk.samples_per_sec == 44100);
-    assert(header.fmt_chunk.bits_per_sample == 16);
-    assert(header.fmt_chunk.size_of_block = 2);
-    assert(header.fmt_chunk.bytes_per_sec == 88200);
-    assert(memcmp(header.data_chunk.chunk_type, "data", 4) == 0);
-    assert(header.data_chunk.size_of_data == 1574140);
+    assert(memcmp(header.r.file_type, "RIFF", 4) == 0);
+    assert(header.r.size_of_riff == 1574176);
+    assert(memcmp(header.r.riff_type, "WAVE", 4) == 0);
+    assert(memcmp(header.f.chunk_type, "fmt ", 4) == 0);
+    assert(header.f.size_of_fmt == 16);
+    assert(header.f.format_tag == 1);
+    assert(header.f.num_of_channels == 1);
+    assert(header.f.samples_per_sec == 44100);
+    assert(header.f.bits_per_sample == 16);
+    assert(header.f.size_of_block = 2);
+    assert(header.f.bytes_per_sec == 88200);
+    assert(memcmp(header.d.chunk_type, "data", 4) == 0);
+    assert(header.d.size_of_data == 1574140);
     return;
 }

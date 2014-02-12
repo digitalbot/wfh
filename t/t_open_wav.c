@@ -3,7 +3,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "../wav_file_handle.h"
+#include "../wfh.h"
 
 
 int main(int argc, char *argv[]) {

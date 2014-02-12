@@ -1,5 +1,5 @@
 /*
- * wav_file_handle.c
+ *  wfh.c
  */
 
 
@@ -8,7 +8,7 @@
 #include <string.h>
 #include <limits.h>
 
-#include "wav_file_handle.h"
+#include "wfh.h"
 
 
 FILE *open_wav(char *filename, OpenFlags flag) {
@@ -76,8 +76,8 @@ int read_fmt_chunk(FILE *fp, FmtChunk *chunk) {
         fprintf(stderr, "[ERROR] 'fmt ' chunk is empty.\n");
         return EXIT_FAILURE;
     }
-    if (temp.format_tag <= 0) {
-        fprintf(stderr, "[ERROR] format tag is wrong.\n");
+    if (temp.format_tag != 3 && temp.format_tag != 1) {
+        fprintf(stderr, "[ERROR] format tag <%d> is wrong.\n", temp.format_tag);
         return EXIT_FAILURE;
     }
     if (temp.num_of_channels <= 0) {
@@ -167,8 +167,108 @@ int read_wav_file_header(FILE *fp, WavFileHeader *header) {
         return EXIT_FAILURE;
     }
 
-    header->riff_chunk = riff_chunk;
-    header->fmt_chunk = fmt_chunk;
-    header->data_chunk = data_chunk;
+    header->r = riff_chunk;
+    header->f = fmt_chunk;
+    header->d = data_chunk;
     return EXIT_SUCCESS;
+}
+
+static int _seek_to_beginning_of_data(FILE *fp) {
+    DataChunk temp;
+    if (read_data_chunk(fp, &temp)) {
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
+}
+
+WavData *new_wav_data(FILE *fp) {
+    WavFileHeader h;
+    if (read_wav_file_header(fp, &h)) {
+        return NULL;
+    }
+    if (_seek_to_beginning_of_data(fp)) {
+        return NULL;
+    }
+
+    int channels = h.f.num_of_channels;
+    int samples  = h.d.size_of_data / h.f.size_of_block;
+    int bitrate  = h.f.bits_per_sample;
+    WavData *wav = malloc(sizeof(struct WavData) + sizeof(double *) * channels);
+    wav->hdr = h;
+    wav->data_type = bitrate * 10 + (h.f.format_tag == 3 ? 1 : 0);
+    wav->num_of_samples = samples;
+    wav->bytes_per_sample = bitrate / CHAR_BIT;
+
+    for (int i = 0; i < channels; i++) {
+        wav->datas[i] = malloc(sizeof(double) * wav->num_of_samples);
+    }
+
+    void *buf;
+    switch (wav->data_type) {
+        case kIsDouble:
+            wav->buf_abs_limit = 1.0;
+            for (int i = 0; i < samples; i++) {
+                for (int j = 0; j < channels; j++) {
+                    fread(&buf, wav->bytes_per_sample, 1 , fp);
+                    wav->datas[j][i] = (double)*(double *)&buf;
+                }
+            }
+            break;
+
+        case kIsFloat:
+            wav->buf_abs_limit = 1.0;
+            for (int i = 0; i < samples; i++) {
+                for (int j = 0; j < channels; j++) {
+                    fread(&buf, wav->bytes_per_sample, 1 , fp);
+                    wav->datas[j][i] = (double)*(float *)&buf;
+                }
+            }
+            break;
+
+        case kIsInt:
+            wav->buf_abs_limit = (1 << bitrate) / 2;
+            for (int i = 0; i < samples; i++) {
+                for (int j = 0; j < channels; j++) {
+                    fread(&buf, wav->bytes_per_sample, 1 , fp);
+                    wav->datas[j][i] = (double)*(int *)&buf / wav->buf_abs_limit;
+                }
+            }
+            break;
+
+        case kIsShort:
+            wav->buf_abs_limit = (1 << bitrate) / 2;
+            for (int i = 0; i < samples; i++) {
+                for (int j = 0; j < channels; j++) {
+                    fread(&buf, wav->bytes_per_sample, 1 , fp);
+                    wav->datas[j][i] = (double)*(short *)&buf / wav->buf_abs_limit;
+                }
+            }
+            break;
+
+        case kIsChar:
+            wav->buf_abs_limit = (1 << bitrate) / 2;
+            for (int i = 0; i < samples; i++) {
+                for (int j = 0; j < channels; j++) {
+                    fread(&buf, wav->bytes_per_sample, 1 , fp);
+                    wav->datas[j][i] = (double)*(char *)&buf / wav->buf_abs_limit;
+                }
+            }
+            break;
+
+        default:
+            fprintf(stderr, "[ERROR] bitrate <%d> is wrong.\n", bitrate);
+            break;
+    }
+    return wav;
+}
+
+void destroy_wav_data(WavData *wav) {
+    if (wav == NULL) return;
+    for (int i = 0; i < wav->hdr.f.num_of_channels; i++) {
+        if (wav->datas[i] != NULL) {
+            free(wav->datas[i]);
+            wav->datas[i] = NULL;
+        }
+    }
+    free(wav);
 }

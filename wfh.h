@@ -1,18 +1,16 @@
 /*
- *  wav_file_handle.h
+ *  wfh.h
  */
 
-#ifndef WAV_FILE_HANDLE_
-#define WAV_FILE_HANDLE_
-
-#define MONORAL 1
-#define STEREO  2
+#ifndef WFH_
+#define WFH_
 
 typedef enum {
-    kIsChar   = 8,
-    kIsShort  = 16,
-    kIsFloat  = 32,
-    kIsDouble = 64,
+    kIsChar   = 80,
+    kIsShort  = 160,
+    kIsInt    = 320,
+    kIsFloat  = 321,
+    kIsDouble = 640,
 } DataTypes;
 
 typedef enum {
@@ -44,22 +42,19 @@ typedef struct DataChunk {
 } DataChunk;
 
 typedef struct WavFileHeader {
-    RiffChunk riff_chunk;
-    FmtChunk  fmt_chunk;
-    DataChunk data_chunk;
+    RiffChunk r;
+    FmtChunk  f;
+    DataChunk d;
 } WavFileHeader;
 #pragma pack(pop)
 
 typedef struct WavData {
-    unsigned short num_of_channels;
-    unsigned int   num_of_samples;
-    unsigned int   samples_per_sec;
-    unsigned int   bytes_per_sec;
-    unsigned short size_of_block;
-    unsigned int   bytes_per_sample;
-    double         buf_abs_limit;
-    double         *data;
-    double         *data_r;
+    WavFileHeader hdr;
+    DataTypes     data_type;
+    unsigned int  num_of_samples;
+    unsigned int  bytes_per_sample;
+    double        buf_abs_limit;
+    double        *datas[];
 } WavData;
 
 
@@ -70,6 +65,8 @@ int read_riff_chunk(FILE *fp, RiffChunk *chunk);
 int read_fmt_chunk(FILE *fp, FmtChunk *chunk);
 int read_data_chunk(FILE *fp, DataChunk *chunk);
 int read_wav_file_header(FILE *fp, WavFileHeader *header);
+WavData *new_wav_data(FILE *fp);
+void destroy_wav_data(WavData *wav);
 
 
-#endif   // WAV_FILE_HANDLE_
+#endif   // WFH_
